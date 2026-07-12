@@ -7,3 +7,4 @@ data/raw/
 *.h5
 *.pkl
 .ipynb_checkpoints/
+!data/events.csv
