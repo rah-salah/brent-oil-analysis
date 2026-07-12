@@ -15,3 +15,6 @@ Historical Brent oil prices from May 1987 to September 2022.
 
 ## Setup
 pip install -r requirements.txt
+
+## Data Source
+Brent crude oil daily spot prices (USD/barrel), 20 May 1987 – September 2022, sourced from the U.S. Energy Information Administration (EIA): https://www.eia.gov/dnav/pet/hist/RBRTED.htm

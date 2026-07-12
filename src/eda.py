@@ -9,7 +9,16 @@ import os
 
 os.makedirs("data/processed", exist_ok=True)
 
-df = pd.read_csv("data/processed/brent_clean.csv", parse_dates=["Date"])
+import sys
+
+try:
+    df = pd.read_csv("data/processed/brent_clean.csv", parse_dates=["Date"])
+except FileNotFoundError:
+    print("ERROR: data/processed/brent_clean.csv not found. Run data cleaning step first.")
+    sys.exit(1)
+except pd.errors.ParserError as e:
+    print(f"ERROR: could not parse brent_clean.csv - {e}")
+    sys.exit(1)
 
 # Key geopolitical events
 EVENTS = [
