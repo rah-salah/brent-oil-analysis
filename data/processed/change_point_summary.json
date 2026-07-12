@@ -1,0 +1,15 @@
+{
+  "change_point_index": 394,
+  "change_point_date": "2020-04-30",
+  "avg_daily_log_return_before": 0.0003,
+  "avg_daily_log_return_after": 0.00658,
+  "avg_daily_pct_change_before": 0.0299,
+  "avg_daily_pct_change_after": 0.6602,
+  "avg_price_30d_before": 42.76,
+  "avg_price_30d_after": 31.3,
+  "matched_event": {
+    "event": "COVID-19 Oil Price War",
+    "event_date": "2020-03-06",
+    "days_apart": 55
+  }
+}
