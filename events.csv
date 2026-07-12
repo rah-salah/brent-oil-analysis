@@ -1,0 +1,18 @@
+date,event,category,description
+1990-08-02,Gulf War Begins,Geopolitical/War,Iraq invades Kuwait; fears of supply disruption from the Persian Gulf spike prices sharply.
+1997-07-01,Asian Financial Crisis,Economic Crisis,Currency collapses across Southeast Asia sharply reduce regional oil demand.
+1998-12-10,Oil Price Trough,Economic/Supply Glut,Prices hit a historic low amid oversupply and weak Asian demand.
+1999-03-01,OPEC Production Cut Agreement,OPEC Policy,"OPEC and non-OPEC producers agree to cut output, beginning a multi-year price recovery."
+2001-09-11,September 11 Attacks,Geopolitical,Terrorist attacks in the US introduce geopolitical risk premium into energy markets.
+2003-03-20,Iraq War Begins,Geopolitical/War,US-led invasion of Iraq raises concerns over Middle East supply stability.
+2005-08-29,Hurricane Katrina,Natural Disaster,Gulf Coast refining and production capacity is severely disrupted.
+2008-07-11,Oil Price Peak (~$147),Market Extreme,Brent crude reaches an all-time high amid strong demand and speculative activity.
+2008-09-15,Global Financial Crisis (Lehman Collapse),Economic Crisis,Lehman Brothers collapse triggers a global recession and demand collapse.
+2010-12-18,Arab Spring Begins,Geopolitical,"Political unrest spreads across the Middle East and North Africa, raising supply risk."
+2011-02-17,Libyan Civil War,Geopolitical/War,Conflict disrupts Libyan oil production and exports.
+2014-11-27,OPEC Maintains Production (No Cut),OPEC Policy,"OPEC declines to cut output despite falling prices, accelerating a price collapse."
+2016-01-16,Iran Sanctions Lifted,Sanctions/Policy,Implementation Day of the nuclear deal allows Iranian oil back onto world markets.
+2016-11-30,OPEC Vienna Agreement,OPEC Policy,"First OPEC production cut agreement since 2008, aimed at rebalancing the market."
+2020-03-06,COVID-19 Oil Price War,OPEC Policy/Pandemic,OPEC+ talks collapse and Saudi Arabia launches a price war just as COVID-19 collapses demand.
+2020-04-20,WTI Futures Turn Negative,Market Extreme,US storage capacity constraints briefly send WTI futures prices below zero.
+2022-02-24,Russia Invades Ukraine,Geopolitical/War,Invasion triggers sanctions on Russian energy exports and a global supply shock.
