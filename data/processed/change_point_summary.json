@@ -1,0 +1,16 @@
+{
+  "change_point_index": 5406,
+  "change_point_date": "2008-08-21",
+  "mean_log_return_before": 0.000334505067032797,
+  "mean_log_return_after": -7.467062267397856e-05,
+  "volatility_before": 0.02304144633658002,
+  "volatility_after": 0.02886406990182546,
+  "avg_price_before": 29.98351646318905,
+  "avg_price_after": 76.08494728079911,
+  "matched_event": {
+    "event": "Global Financial Crisis (Lehman Collapse)",
+    "event_date": "2008-09-15",
+    "days_from_change_point": 25,
+    "category": "Economic Crisis"
+  }
+}
