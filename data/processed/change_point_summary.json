@@ -1,10 +1,10 @@
 {
   "change_point_index": 5406,
   "change_point_date": "2008-08-21",
-  "mean_log_return_before": 0.000334505067032797,
-  "mean_log_return_after": -7.467062267397856e-05,
-  "volatility_before": 0.02304144633658002,
-  "volatility_after": 0.02886406990182546,
+  "mean_log_return_before": 0.0003451623164069973,
+  "mean_log_return_after": -6.683059357825868e-05,
+  "volatility_before": 0.023038720652708497,
+  "volatility_after": 0.02885917076760759,
   "avg_price_before": 29.98351646318905,
   "avg_price_after": 76.08494728079911,
   "matched_event": {
@@ -12,5 +12,17 @@
     "event_date": "2008-09-15",
     "days_from_change_point": 25,
     "category": "Economic Crisis"
+  },
+  "local_impact": {
+    "window_days": 90,
+    "avg_price_before_window": 124.65,
+    "avg_price_after_window": 69.84,
+    "pct_price_change": -43.97,
+    "volatility_before_window": 0.02172,
+    "volatility_after_window": 0.04334
+  },
+  "probabilistic": {
+    "p_volatility_increased": 1.0,
+    "p_mean_increased": 0.23075
   }
 }
