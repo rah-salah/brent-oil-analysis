@@ -1,0 +1,20 @@
+{
+  "name": "brent-oil-dashboard",
+  "version": "1.0.0",
+  "description": "Interactive React dashboard for Brent oil price change point analysis",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.8.0",
+    "axios": "^1.5.0"
+  },
+  "devDependencies": {
+    "vite": "^4.4.0",
+    "@vitejs/plugin-react": "^4.0.0"
+  }
+}
