@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brent Oil Price Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+    header { background: #1e293b; padding: 18px 28px; border-bottom: 1px solid #334155; }
+    header h1 { font-size: 1.4rem; color: #f1f5f9; font-weight: 700; }
+    header span { font-size: 0.85rem; color: #94a3b8; display: block; margin-top: 2px; }
+    .layout { display: flex; height: calc(100vh - 70px); }
+    .main { flex: 1; padding: 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+    .sidebar { width: 290px; background: #1e293b; border-left: 1px solid #334155; padding: 14px; overflow-y: auto; flex-shrink: 0; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; }
+    .card h2 { font-size: 0.8rem; color: #94a3b8; font-weight: 600; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .chart-wrap { position: relative; height: 300px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+    .filters label { font-size: 0.78rem; color: #94a3b8; display: block; margin-bottom: 3px; }
+    .filters input, .filters select { background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: #e2e8f0; padding: 5px 9px; font-size: 0.82rem; }
+    .btn { background: #3b82f6; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 0.82rem; cursor: pointer; font-weight: 600; }
+    .btn:hover { background: #2563eb; }
+    .btn.g { background: #475569; }
+    .btn.g:hover { background: #334155; }
+    .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+    .stat { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; text-align: center; }
+    .stat .val { font-size: 1.3rem; font-weight: 700; color: #f1f5f9; }
+    .stat .lbl { font-size: 0.7rem; color: #64748b; margin-top: 3px; }
+    .cp { background: #1e293b; border: 1px solid #ef4444; border-radius: 10px; padding: 14px; }
+    .cp h3 { color: #ef4444; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; }
+    .cp .dt { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; }
+    .cp .det { font-size: 0.78rem; color: #94a3b8; margin-top: 5px; line-height: 1.6; }
+    .cp .badge { display: inline-block; background: #ef444422; color: #ef4444; border: 1px solid #ef4444; border-radius: 4px; padding: 2px 7px; font-size: 0.7rem; font-weight: 600; margin-top: 6px; }
+    .sidebar h2 { font-size: 0.8rem; color: #94a3b8; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .catbtns { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
+    .catbtns button { font-size: 0.68rem; padding: 3px 8px; border-radius: 20px; border: 1px solid #475569; background: transparent; color: #94a3b8; cursor: pointer; }
+    .catbtns button.on { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+    .evlist { display: flex; flex-direction: column; gap: 6px; }
+    .ev { background: #0f172a; border: 1px solid #334155; border-radius: 7px; padding: 8px 10px; cursor: pointer; }
+    .ev:hover, .ev.on { border-color: #3b82f6; }
+    .ev.on { background: #1e3a5f22; }
+    .ev .edt { font-size: 0.66rem; color: #64748b; font-weight: 600; }
+    .ev .etit { font-size: 0.78rem; color: #e2e8f0; margin-top: 2px; font-weight: 600; }
+    .ev .ecat { display: inline-block; font-size: 0.63rem; padding: 1px 6px; border-radius: 10px; margin-top: 3px; font-weight: 600; }
+    .cg { background:#7f1d1d33; color:#fca5a5; border:1px solid #7f1d1d; }
+    .co { background:#78350f33; color:#fcd34d; border:1px solid #78350f; }
+    .ce { background:#1e3a5f33; color:#93c5fd; border:1px solid #1e3a5f; }
+    .cd { background:#14532d33; color:#86efac; border:1px solid #14532d; }
+    .msg { text-align:center; color:#64748b; padding:28px; font-size:0.83rem; }
+    .err { color:#ef4444; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>🛢️ Brent Oil Price Analysis Dashboard</h1>
+  <span>Bayesian Change Point Detection &middot; 1987&ndash;2022</span>
+</header>
+<div class="layout">
+  <div class="main">
+    <div class="card">
+      <div class="filters">
+        <div><label>From</label><input type="date" id="dFrom" value="1987-01-01"></div>
+        <div><label>To</label><input type="date" id="dTo" value="2022-12-31"></div>
+        <div><label>Event Category</label>
+          <select id="eCat">
+            <option value="all">All Categories</option>
+            <option value="geopolitical">Geopolitical</option>
+            <option value="opec">OPEC</option>
+            <option value="economic">Economic</option>
+            <option value="demand">Demand</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn" onclick="applyF()">Apply</button>
+          <button class="btn g" onclick="resetF()">Reset</button>
+          <button class="btn g" id="cpBtn" onclick="toggleCP()">Hide CP</button>
+        </div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="val" id="sMin">-</div><div class="lbl">Min Price</div></div>
+      <div class="stat"><div class="val" id="sMax">-</div><div class="lbl">Max Price</div></div>
+      <div class="stat"><div class="val" id="sAvg">-</div><div class="lbl">Avg Price</div></div>
+      <div class="stat"><div class="val" id="sPts">-</div><div class="lbl">Data Points</div></div>
+    </div>
+    <div class="card" style="flex:1">
+      <h2>Brent Crude Oil Price (USD / barrel)</h2>
+      <div class="chart-wrap">
+        <div class="msg" id="cMsg">Loading price data...</div>
+        <canvas id="myChart" style="display:none"></canvas>
+      </div>
+    </div>
+    <div class="cp">
+      <h3>&#9889; Bayesian Change Point Detected</h3>
+      <div class="dt" id="cpDate">Loading...</div>
+      <div class="det" id="cpDet"></div>
+      <span class="badge" id="cpBadge"></span>
+    </div>
+  </div>
+  <div class="sidebar">
+    <h2>Key Historical Events</h2>
+    <div class="catbtns">
+      <button class="on" onclick="sfilt('all',this)">All</button>
+      <button onclick="sfilt('geopolitical',this)">Geopolitical</button>
+      <button onclick="sfilt('opec',this)">OPEC</button>
+      <button onclick="sfilt('economic',this)">Economic</button>
+      <button onclick="sfilt('demand',this)">Demand</button>
+    </div>
+    <div class="evlist" id="evList"><div class="msg">Loading...</div></div>
+  </div>
+</div>
+<script>
+var allP=[],allE=[],cpD=null,chart=null,showCP=true,sideCat='all',selEv=null;
+Promise.all([
+  fetch('/api/prices').then(function(r){return r.json();}),
+  fetch('/api/changepoint').then(function(r){return r.json();}),
+  fetch('/api/events').then(function(r){return r.json();})
+]).then(function(res){
+  allP=res[0]; cpD=res[1];
+  var er=res[2]; allE=Array.isArray(er)?er:(er.events||[]);
+  setStats(allP); drawChart(allP,allE); showCPBox(cpD); drawSide(allE);
+}).catch(function(e){
+  document.getElementById('cMsg').innerHTML='<span class="err">Error loading data. Is Flask running?<br>'+e.message+'</span>';
+});
+function setStats(d){
+  var px=d.map(function(x){return x.price;}).filter(Boolean);
+  if(!px.length)return;
+  document.getElementById('sMin').textContent='$'+Math.min.apply(null,px).toFixed(1);
+  document.getElementById('sMax').textContent='$'+Math.max.apply(null,px).toFixed(1);
+  document.getElementById('sAvg').textContent='$'+(px.reduce(function(a,b){return a+b;},0)/px.length).toFixed(1);
+  document.getElementById('sPts').textContent=px.length.toLocaleString();
+}
+function drawChart(data,events){
+  document.getElementById('cMsg').style.display='none';
+  var cv=document.getElementById('myChart'); cv.style.display='block';
+  var cc={geopolitical:'#fca5a5',opec:'#fcd34d',economic:'#93c5fd',demand:'#86efac'};
+  var ann={};
+  var cf=document.getElementById('eCat').value;
+  var fe=cf==='all'?events:events.filter(function(e){return(e.category||'').toLowerCase()===cf;});
+  fe.forEach(function(ev,i){
+    var c=cc[(ev.category||'').toLowerCase()]||'#94a3b8';
+    ann['e'+i]={type:'line',xMin:ev.date,xMax:ev.date,borderColor:c+'66',borderWidth:1.2,borderDash:[4,3]};
+  });
+  if(showCP&&cpD){
+    var cd=cpD.change_point_date||cpD.date||'';
+    if(cd) ann['cp']={type:'line',xMin:cd,xMax:cd,borderColor:'#ef4444',borderWidth:2.5,
+      label:{display:true,content:'Change Point',position:'start',backgroundColor:'#ef444433',color:'#ef4444',font:{size:10,weight:'bold'},padding:3}};
+  }
+  if(chart) chart.destroy();
+  chart=new Chart(cv,{
+    type:'line',
+    data:{labels:data.map(function(d){return d.date;}),datasets:[{
+      label:'Brent Price (USD/bbl)',data:data.map(function(d){return d.price;}),
+      borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,0.07)',
+      borderWidth:1.5,pointRadius:0,fill:true,tension:0.2
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},annotation:{annotations:ann},
+        tooltip:{mode:'index',intersect:false,backgroundColor:'#1e293b',borderColor:'#334155',borderWidth:1,
+          callbacks:{label:function(c){return' $'+c.parsed.y.toFixed(2)+'/bbl';}}}},
+      scales:{
+        x:{ticks:{color:'#64748b',maxTicksLimit:10,maxRotation:0},grid:{color:'#1e293b'}},
+        y:{ticks:{color:'#64748b',callback:function(v){return'$'+v;}},grid:{color:'#334155'}}
+      }
+    }
+  });
+}
+function showCPBox(cp){
+  if(!cp)return;
+  var dt=cp.change_point_date||cp.date||'Unknown';
+  var b=cp.mean_before?'$'+Number(cp.mean_before).toFixed(2):'';
+  var a=cp.mean_after?'$'+Number(cp.mean_after).toFixed(2):'';
+  var pr=cp.probability?(cp.probability*100).toFixed(1)+'%':'';
+  var im=cp.price_impact||cp.local_impact||'';
+  document.getElementById('cpDate').textContent=dt;
+  document.getElementById('cpDet').innerHTML=(b&&a?'Avg before: <b>'+b+'</b> → after: <b>'+a+'</b><br>':'')+(im?'Impact: <b>'+im+'</b><br>':'')+(cp.interpretation||cp.description||'');
+  document.getElementById('cpBadge').textContent=pr?'Posterior probability: '+pr:'Bayesian Change Point';
+}
+function drawSide(ev){
+  var list=document.getElementById('evList');
+  var sh=sideCat==='all'?ev:ev.filter(function(e){return(e.category||'').toLowerCase()===sideCat;});
+  if(!sh.length){list.innerHTML='<div class="msg">No events.</div>';return;}
+  list.innerHTML=sh.map(function(e,i){
+    var cat=(e.category||'economic').toLowerCase();
+    var cls={'geopolitical':'cg','opec':'co','economic':'ce','demand':'cd'}[cat]||'ce';
+    return '<div class="ev'+(selEv===i?' on':'')+'" onclick="pickEv('+i+')">'
+      +'<div class="edt">'+e.date+'</div>'
+      +'<div class="etit">'+(e.title||e.event||'Event')+'</div>'
+      +'<span class="ecat '+cls+'">'+(e.category||'Economic')+'</span>'
+      +'</div>';
+  }).join('');
+}
+function pickEv(i){selEv=selEv===i?null:i;drawSide(allE);}
+function sfilt(c,btn){
+  sideCat=c;selEv=null;
+  document.querySelectorAll('.catbtns button').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  drawSide(allE);drawChart(dateF(),allE);
+}
+function dateF(){
+  var f=document.getElementById('dFrom').value,t=document.getElementById('dTo').value;
+  return allP.filter(function(d){return(!f||d.date>=f)&&(!t||d.date<=t);});
+}
+function applyF(){var d=dateF();setStats(d);drawChart(d,allE);}
+function resetF(){
+  document.getElementById('dFrom').value='1987-01-01';
+  document.getElementById('dTo').value='2022-12-31';
+  document.getElementById('eCat').value='all';
+  setStats(allP);drawChart(allP,allE);
+}
+function toggleCP(){
+  showCP=!showCP;
+  document.getElementById('cpBtn').textContent=showCP?'Hide CP':'Show CP';
+  drawChart(dateF(),allE);
+}
+</script>
+</body>
+</html>
